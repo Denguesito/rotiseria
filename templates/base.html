@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotiseria Jomal</title>
+</head>
+<body>
+    <div>
+        <nav>
+            <ul>
+                <li><a href="#">Productos</a></li>
+                <li><a href="#">Promociones</a></li>
+                <li><a href="#">Carrito</a></li>
+            </ul>
+        </nav>
+    </div>
+    <main>
+        {% block contenido %}
+        {% endblock contenido %}
+    </main>
+    <footer>
+        <p>diircion</p>
+        <p>telefono</p>
+        <p>redes</p>
+    </footer>
+</body>
+</html>
