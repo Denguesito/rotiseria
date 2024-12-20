@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from .models import Productos
 
 # Vista para listar todos los productos
@@ -13,3 +13,16 @@ class ProductoDetailView(DetailView):
     template_name = 'productos/detalle_producto.html'  # Plantilla para los detalles
     context_object_name = 'producto'
 
+class IndexView(TemplateView):
+    template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Agrupar productos por categoría
+        categorias = Productos.CATEGORIAS
+        productos_por_categoria = {
+            categoria[0]: Productos.objects.filter(categoria=categoria[0])
+            for categoria in categorias
+        }
+        context['productos_por_categoria'] = productos_por_categoria
+        return context
