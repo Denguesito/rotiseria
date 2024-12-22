@@ -1,12 +1,25 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-<section>
-    <h2>{{ producto.nombre }}</h2>
-    <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" style="max-width: 300px;">
-    <p>{{ producto.descripcion }}</p>
-    <p>Precio: ${{ producto.precio }}</p>
-    <button>Pedir</button>
-    <a href="{% url 'productos:lista' %}">Volver a la lista</a>
+<section class="producto-detalle-container mt-5">
+    <h2 class="text-center mb-4">{{ producto.nombre }}</h2>
+    <div class="producto-d-flex-container d-flex flex-column flex-md-row align-items-center justify-content-between">
+        <!-- Detalle del producto a la izquierda -->
+        <div class="producto-detalle flex-fill mb-3 mb-md-0">
+            <p>{{ producto.descripcion }}</p>
+            <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+        </div>
+
+        <!-- Imagen del producto en el centro -->
+        <div class="producto-imagen-container d-flex justify-content-center align-items-center">
+            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="img-fluid" style="max-width: 400px; height: auto;">
+        </div>
+    </div>
+
+    <!-- Botón "Pedir" debajo de los detalles y la imagen -->
+    <div class="text-center mt-4">
+        <button class="btn btn-primary">Pedir</button>
+        <a href="{% url 'productos:lista' %}" class="btn btn-secondary mt-3 d-block">Volver a la lista</a>
+    </div>
 </section>
 {% endblock contenido %}

@@ -1,0 +1,37 @@
+ /* CSS personalizado para el diseño */
+    .producto-detalle {
+        max-width: 500px;  /* Limita el tamaño del detalle */
+    }
+
+    .producto-imagen-container img {
+        max-width: 100%;  /* Hace que la imagen sea completamente responsiva */
+        height: auto;  /* Mantiene la proporción de la imagen */
+    }
+
+    /* Aseguramos que la imagen y el detalle se alineen correctamente */
+    .producto-d-flex-container {
+        display: flex;
+    }
+
+    .flex-column {
+        flex-direction: column;
+    }
+
+    .flex-md-row {
+        flex-direction: row;
+    }
+
+    /* Asegura que el contenedor de los botones tenga un buen espaciado */
+    .mt-4 {
+        margin-top: 1.5rem;
+    }
+
+    .mt-3 {
+        margin-top: 1rem;
+    }
+
+    /* Hacer que todo el contenido esté centrado y responsivo */
+    .producto-detalle-container {
+        max-width: 1200px;  /* Limita el ancho del contenedor principal */
+    }
+
