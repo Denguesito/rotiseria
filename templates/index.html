@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block contenido %}
 
 {% for categoria, productos in productos_por_categoria.items %}
 <section>
-    <h2>{{ categoria }}</h2>
-    <button onclick="toggleSubmenu('{{ categoria }}')">Ver Opciones</button>
+    <!-- Usamos la imagen y el título como botón -->
+    <button onclick="toggleSubmenu('{{ categoria }}')" style="background: none; border: none; cursor: pointer;">
+        <img src="{% static imagenes_categorias.categoria %}" alt="{{ categoria }}" style="width:150px; height:150px;">
+
+
+        <h2>{{ categoria }}</h2>
+    </button>
     <ul id="submenu-{{ categoria }}" style="display: none;">
         {% for producto in productos %}
         <li>

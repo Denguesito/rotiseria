@@ -10,3 +10,4 @@ urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('productos/', include(('apps.productos.urls', 'productos'), namespace='productos')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+  
