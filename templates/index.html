@@ -1,54 +1,33 @@
 {% extends "base.html" %}
 
-{% load static %}
-
 {% block contenido %}
 
-<!--hamburgesas-->
+{% for categoria, productos in productos_por_categoria.items %}
 <section>
-    <a href="#"> 
-        <h2>Homburgeza</h2>
-        <img src="" alt="">
-    </a>
+    <h2>{{ categoria }}</h2>
+    <button onclick="toggleSubmenu('{{ categoria }}')">Ver Opciones</button>
+    <ul id="submenu-{{ categoria }}" style="display: none;">
+        {% for producto in productos %}
+        <li>
+            <h3>{{ producto.nombre }}</h3>
+            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" style="max-width: 150px;">
+            <p>{{ producto.descripcion }}</p>
+            <p>Precio: ${{ producto.precio }}</p>
+            <button>Pedir</button>
+        </li>
+        {% endfor %}
+    </ul>
 </section>
+{% endfor %}
 
-<!--lomito-->
-<section>
-    <a href="#"> 
-       <h2>Lomito</h2>
-       <img src="" alt="">
-    </a>
-</section>
-
-<!--pizza-->
-<section>
-    <a href="#">
-        <h2>Pizza</h2>
-        <img src="" alt="">
-    </a>
-</section>
-
-<!--sanwiche-->
-<section>
-    <a href="#">
-        <h2>Sanwiche</h2>
-        <img src="" alt="">
-    </a>
-</section>
-
-<!--papa frita-->
-<section>
-    <a href="#">
-        <h2>Papa Frita</h2>
-        <img src="" alt="">
-    </a>
-</section>
-
-<!--promociones-->
-<section>
-    <!--hacer una apps promociones-->
-    <h2>Promociones</h2>
- 
-</section>
-
+<script>
+function toggleSubmenu(categoria) {
+    const submenu = document.getElementById(`submenu-${categoria}`);
+    if (submenu.style.display === 'none') {
+        submenu.style.display = 'block';
+    } else {
+        submenu.style.display = 'none';
+    }
+}
+</script>
 {% endblock contenido %}

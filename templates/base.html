@@ -1,29 +1,29 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rotiseria Jomal</title>
+    <title>Rotisería</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <div>
+    <header>
+        <h1>Rotisería</h1>
         <nav>
             <ul>
-                <li><a href="#">Productos</a></li>
-                <li><a href="#">Promociones</a></li>
-                <li><a href="#">Carrito</a></li>
+                <li><a href="{% url 'index' %}">Inicio</a></li>
+                <li><a href="{% url 'productos:lista' %}">Productos</a></li>
             </ul>
         </nav>
-    </div>
+    </header>
     <main>
         {% block contenido %}
+        <!-- Contenido específico de cada página -->
         {% endblock contenido %}
     </main>
     <footer>
-        <p>diircion</p>
-        <p>telefono</p>
-        <p>redes</p>
+        <p>&copy; 2024 Rotisería. Todos los derechos reservados.</p>
     </footer>
 </body>
 </html>
