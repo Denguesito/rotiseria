@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% load static %}
@@ -8,10 +9,14 @@
 <section>
     <!-- Usamos la imagen y el título como botón -->
     <button onclick="toggleSubmenu('{{ categoria }}')" style="background: none; border: none; cursor: pointer;">
-        <img src="{% static imagenes_categorias.categoria %}" alt="{{ categoria }}" style="width:150px; height:150px;">
-
-
-        <h2>{{ categoria }}</h2>
+        {% for categoria_img, imagen in imagenes_categorias %}
+            {% if categoria == categoria_img %}
+            <div>
+                <img src="{{ imagen }}" alt="{{ categoria }}" style="max-width: 150px; height: 150px;"> <h2>{{ categoria }}</h2>
+            </div>
+            {% endif %}
+        {% endfor %}
+        
     </button>
     <ul id="submenu-{{ categoria }}" style="display: none;">
         {% for producto in productos %}
@@ -37,4 +42,5 @@ function toggleSubmenu(categoria) {
     }
 }
 </script>
+
 {% endblock contenido %}

@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView
+from django.views.generic.base import TemplateView
 from apps.productos.models import Productos
 
 class IndexView(TemplateView):
@@ -22,14 +22,11 @@ class IndexView(TemplateView):
             'Sandwich de milanesa': '/static/img/milanesa.jpg',
             'Papas fritas': '/static/img/frita.jpg',
         }
-        
 
-        # Agregar imágenes con valor predeterminado para categorías sin imagen
-        categorias_con_imagenes = {
-            categoria[0]: imagenes_categorias.get(categoria[0], '/static/img/default.jpg')
-            for categoria in categorias
-        }
+        # Convertir el diccionario en una lista de tuplas
+        imagenes_categorias_lista = list(imagenes_categorias.items())
 
         context['productos_por_categoria'] = productos_por_categoria
-        context['imagenes_categorias'] = categorias_con_imagenes
+        context['imagenes_categorias'] = imagenes_categorias_lista
+
         return context
