@@ -9,5 +9,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', IndexView.as_view(), name='index'),
     path('productos/', include(('apps.productos.urls', 'productos'), namespace='productos')),
+    path('carrito/', include(('apps.carrito.urls', 'carrito'), namespace='carrito')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
   
