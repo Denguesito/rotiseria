@@ -27,7 +27,8 @@
                     <h5 class="card-title">{{ producto.nombre }}</h5>
                     <p class="card-text">{{ producto.descripcion }}</p>
                     <p class="card-text"><strong>Precio: ${{ producto.precio }}</strong></p>
-                    <button class="btn btn-primary">Pedir</button>
+                    <!-- Enlace al formulario de cantidad -->
+                    <a href="{% url 'carrito:agregar_producto' producto.id %}" class="btn btn-primary">Pedir</a>
                 </div>
             </div>
         </li>

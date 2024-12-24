@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+<section class="eliminar-producto-section mt-5">
+    <h2 class="text-center mb-4">Eliminar Producto</h2>
+    
+    <div class="text-center">
+        <p>¿Estás seguro de que deseas eliminar el producto {{ object.producto.nombre }} del carrito?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+            <a href="{% url 'carrito:carrito_list' %}" class="btn btn-secondary ms-3">Cancelar</a>
+        </form>
+    </div>
+</section>
+{% endblock contenido %}
