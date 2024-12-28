@@ -5,15 +5,16 @@
 {% block contenido %}
 
 {% for categoria, productos in productos_por_categoria.items %}
-<section class="mb-4">
+<section class="productos mb-4">
     <!-- Usamos la imagen y el título como botón -->
-    <button onclick="toggleSubmenu('{{ categoria }}')" class="btn btn-link" style="background: none; border: none; cursor: pointer;">
+    <button onclick="toggleSubmenu('{{ categoria }}')" class="btn btn-link" style="background: none; border: none; cursor: pointer; width: 100%;">
         {% for categoria_img, imagen in imagenes_categorias %}
             {% if categoria == categoria_img %}
-            <div class="d-flex align-items-center">
-                <img src="{{ imagen }}" alt="{{ categoria }}" class="img-thumbnail" style="max-width: 150px; height: 150px;">
-                <h2 class="ms-3">{{ categoria }}</h2>
+            <div class="d-flex justify-content-center align-items-center" style="background-image: url('{{ imagen }}'); background-size: cover; background-position: center; height: 150px; width: 100%;">
+                <h2 class="text-white">{{ categoria }}</h2>
             </div>
+            
+            
             {% endif %}
         {% endfor %}
     </button>

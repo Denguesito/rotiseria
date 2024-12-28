@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block contenido %}
+
 <section class="producto-detalle-container mt-5">
     <h2 class="text-center mb-4">{{ producto.nombre }}</h2>
     <div class="producto-d-flex-container d-flex flex-column flex-md-row align-items-center justify-content-between">
@@ -16,10 +17,11 @@
         </div>
     </div>
 
-    <!-- Botón "Pedir" debajo de los detalles y la imagen -->
+    <!-- Botón "Pedir" debajo de los detalles y la imagen   
     <div class="text-center mt-4">
-        <button class="btn btn-primary">Pedir</button>
+        <button class="btn btn-primary">Pedir</button>HOLAAAAAAAAAAAAAA
         <a href="{% url 'productos:lista' %}" class="btn btn-secondary mt-3 d-block">Volver a la lista</a>
     </div>
+    -->
 </section>
 {% endblock contenido %}
