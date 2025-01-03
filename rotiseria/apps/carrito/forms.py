@@ -1,6 +1,5 @@
 from django import forms
-from .models import Carrito, CarritoItem
-from apps.productos.models import Productos
+from .models import Carrito
 
 
 class CarritoForm(forms.ModelForm):
@@ -24,6 +23,7 @@ class CarritoForm(forms.ModelForm):
         self.fields['cliente_nombre'].required = True
         self.fields['cliente_telefono'].required = True
 
+
 class AgregarCantidadProductoForm(forms.Form):
     """Formulario para elegir la cantidad de un producto antes de agregarlo al carrito."""
     cantidad = forms.IntegerField(
@@ -33,12 +33,3 @@ class AgregarCantidadProductoForm(forms.Form):
         widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 1})
     )
 
-    def __init__(self, *args, **kwargs):
-        producto = kwargs.pop('producto', None)
-        super().__init__(*args, **kwargs)
-        if producto:
-            self.fields['producto'] = forms.ModelChoiceField(
-                queryset=Productos.objects.filter(id=producto.id),
-                initial=producto,
-                widget=forms.HiddenInput()
-            )

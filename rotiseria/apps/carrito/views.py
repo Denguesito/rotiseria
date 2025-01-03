@@ -49,23 +49,22 @@ class CarritoListView(ListView):
         return context
 
 
-    
-
 class AgregarCantidadProductoView(View):
     """Vista para seleccionar la cantidad de un producto antes de agregarlo al carrito."""
     
     def get(self, request, pk):
         producto = get_object_or_404(Productos, pk=pk)
-        form = AgregarCantidadProductoForm(producto=producto)
+        form = AgregarCantidadProductoForm()  # No es necesario pasar 'producto' al formulario aquí
         return render(request, 'carrito/agregar_cantidad.html', {'form': form, 'producto': producto})
 
     def post(self, request, pk):
         producto = get_object_or_404(Productos, pk=pk)
-        form = AgregarCantidadProductoForm(request.POST, producto=producto)
+        form = AgregarCantidadProductoForm(request.POST)
 
         if form.is_valid():
-            carrito = obtener_carrito_activo(request)  # Se pasa 'request' aquí
             cantidad = form.cleaned_data['cantidad']
+            carrito = obtener_carrito_activo(request)  # Función para obtener el carrito activo
+            
             carrito_item, creado = CarritoItem.objects.get_or_create(carrito=carrito, producto=producto)
 
             if not creado:
@@ -75,11 +74,10 @@ class AgregarCantidadProductoView(View):
 
             carrito_item.save()
             messages.success(request, f"Se agregó {producto.nombre} al carrito.")
-            return redirect('index')
+            return redirect('index')  # Redirige a la página principal o la vista que desees
 
         messages.error(request, "No se pudo agregar el producto al carrito.")
         return render(request, 'carrito/agregar_cantidad.html', {'form': form, 'producto': producto})
-
 
 class EliminarProductoView(DeleteView):
     """Elimina un producto del carrito."""
