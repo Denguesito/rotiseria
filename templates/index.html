@@ -7,11 +7,11 @@
 {% for categoria, productos in productos_por_categoria.items %}
 <section class="productos mb-4">
     <!-- Usamos la imagen y el título como botón -->
-    <button onclick="toggleSubmenu('{{ categoria }}')" class="btn btn-link" style="background: none; border: none; cursor: pointer; width: 100%;">
+    <button onclick="toggleSubmenu('{{ categoria }}')" class="btn btn-link" style="background: none; border: none; cursor: pointer; width: 100%; display: contents;">
         {% for categoria_img, imagen in imagenes_categorias %}
             {% if categoria == categoria_img %}
             <div class="d-flex justify-content-center align-items-center" style="background-image: url('{{ imagen }}'); background-size: cover; background-position: center; height: 150px; width: 100%;">
-                <h2 class="text-white">{{ categoria }}</h2>
+                <h2 class="catalogo text-white">{{ categoria }}</h2>
             </div>
             
             
@@ -21,9 +21,9 @@
 
     <ul id="submenu-{{ categoria }}" class="list-unstyled" style="display: none;">
         {% for producto in productos %}
-        <li class="mb-3">
-            <div class="card" style="width: 18rem;">
-                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+        <li class="lista mb-3">
+            <div class="comida card">
+                <img src="{{ producto.imagen.url }}" class="platos card-img-top" alt="{{ producto.nombre }}">
                 <div class="card-body">
                     <h5 class="card-title">{{ producto.nombre }}</h5>
                     <p class="card-text">{{ producto.descripcion }}</p>

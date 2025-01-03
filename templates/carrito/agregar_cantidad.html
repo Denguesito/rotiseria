@@ -2,20 +2,59 @@
 
 {% block contenido %}
 <section class="agregar-cantidad-section mt-5">
-    <h2 class="text-center mb-4">Agregar {{ producto.nombre }} al carrito</h2>
-    
     <div class="d-flex justify-content-center">
-        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" style="max-width: 300px; height: auto;">
+        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" style="max-width: 100%; height: auto;">
     </div>
 
+    <h2 class="text-center mb-4" style="margin-top: 20px;">{{ producto.nombre }}</h2>
     <form method="post" class="mt-4">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="counter-container">
+            <label for="quantity" class="counter-label">CANTIDAD</label>
+            <div class="counter">
+                <button type="button" class="counter-btn" id="decrease">-</button>
+                <input type="text" id="quantity" name="quantity" value="0" readonly>
+                <button type="button" class="counter-btn" id="increase">+</button>
+            </div>
+        </div>
+        <div class="total-container">
+            <span>Total:</span> $<span id="total">0.00</span>
+        </div>
         <button type="submit" class="btn btn-primary">Agregar al carrito</button>
     </form>
+    
+    
 
     <div class="mt-4 text-center">
         <a href="{% url 'index' %}" class="btn btn-secondary">Volver al menu</a>
     </div>
 </section>
+
+
+<script>
+const pricePerProduct = 15.0; // Precio por producto
+
+document.getElementById('increase').addEventListener('click', () => {
+    const quantityInput = document.getElementById('quantity');
+    const totalSpan = document.getElementById('total');
+    const currentQuantity = parseInt(quantityInput.value) + 1;
+
+    quantityInput.value = currentQuantity;
+    totalSpan.textContent = (currentQuantity * pricePerProduct).toFixed(2);
+});
+
+document.getElementById('decrease').addEventListener('click', () => {
+    const quantityInput = document.getElementById('quantity');
+    const totalSpan = document.getElementById('total');
+    const currentQuantity = parseInt(quantityInput.value);
+
+    if (currentQuantity > 0) {
+        quantityInput.value = currentQuantity - 1;
+        totalSpan.textContent = ((currentQuantity - 1) * pricePerProduct).toFixed(2);
+    }
+});
+
+
+
+</script>
 {% endblock contenido %}
