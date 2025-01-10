@@ -1,0 +1,13 @@
+<!-- notificacion_pago.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Notificación de Pago</h2>
+  <p>El pago ha sido confirmado para el pedido con ID: {{ pedido.id }}.</p>
+  <ul>
+    <li><strong>Cliente:</strong> {{ pedido.cliente_nombre }}</li>
+    <li><strong>Estado:</strong> {{ pedido.get_estado_display }}</li>
+    <li><strong>Fecha de Confirmación:</strong> {{ pedido.fecha_creacion }}</li>
+  </ul>
+  <p>El administrador será notificado por WhatsApp.</p>
+{% endblock %}

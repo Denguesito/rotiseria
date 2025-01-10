@@ -5,6 +5,10 @@ from django.contrib import messages
 from .models import Carrito, CarritoItem
 from .forms import CarritoForm, AgregarCantidadProductoForm
 from apps.productos.models import Productos
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.views import View
+from .utils import crear_preferencia, procesar_notificacion_pago
 
 
 def obtener_carrito_activo(request):
@@ -87,3 +91,29 @@ class EliminarProductoView(DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Producto eliminado del carrito.")
         return reverse_lazy('index')
+
+
+class IniciarPagoView(View):
+    """Vista para crear la preferencia de pago y redirigir a Mercado Pago."""
+    
+    def get(self, request):
+        """Método GET para crear la preferencia y redirigir al usuario a Mercado Pago."""
+        carrito = request.user.carrito  # Asegúrate de que el carrito esté asociado al usuario o sesión
+        init_point = crear_preferencia(carrito)
+
+        if init_point:
+            return redirect(init_point)
+        else:
+            return JsonResponse({"error": "No se pudo generar el pago."}, status=400)
+
+class NotificacionPagoView(View):
+    """Vista para recibir y procesar las notificaciones de pago de Mercado Pago."""
+    
+    def post(self, request):
+        """Método POST para procesar la notificación de pago."""
+        try:
+            datos = request.POST
+            procesar_notificacion_pago(datos)
+            return JsonResponse({"status": "Notificación recibida y procesada correctamente"})
+        except Exception as e:
+            return JsonResponse({"error": f"Error procesando la notificación: {e}"}, status=500)

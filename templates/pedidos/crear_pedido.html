@@ -1,0 +1,17 @@
+<!-- crear_pedido.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Confirmar Pedido</h2>
+  <p>¡Tu pedido está listo para ser confirmado!</p>
+  <ul>
+    <li><strong>Cliente:</strong> {{ carrito.carrito.cliente_nombre }}</li>
+    <li><strong>Teléfono:</strong> {{ carrito.carrito.cliente_telefono }}</li>
+    <li><strong>Total a pagar:</strong> ${{ carrito.total_pago }}</li>
+  </ul>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Confirmar Pago</button>
+  </form>
+{% endblock %}

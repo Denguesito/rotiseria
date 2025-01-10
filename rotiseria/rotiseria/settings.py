@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.productos',
     'apps.carrito',
+    'apps.pedidos',
 ]
 
 MIDDLEWARE = [
@@ -122,3 +123,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
+
+# Mercado Pago settings
+MP_CLIENT_ID = 'your_client_id'
+MP_CLIENT_SECRET = 'your_client_secret'
+MP_ACCESS_TOKEN = 'your_access_token'
+
+# WhatsApp API (Twilio)
+TWILIO_ACCOUNT_SID = 'your_account_sid_here'
+TWILIO_AUTH_TOKEN = 'your_auth_token_here'
+TWILIO_WHATSAPP_NUMBER = 'whatsapp:+your_whatsapp_number_here'

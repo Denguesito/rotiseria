@@ -23,7 +23,7 @@
 
         <div class="carrito-total">
             <p><strong>Total:</strong> ${{ carrito.total }}</p>
-            <form action="{% url 'carrito:carrito_list' %}" method="post">
+            <form action="{% url 'carrito:iniciar_pago' %}" method="get">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-success">Confirmar compra</button>

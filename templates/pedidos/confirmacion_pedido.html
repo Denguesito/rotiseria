@@ -1,0 +1,17 @@
+<!-- confirmacion_pedido.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Confirmación de Pedido</h2>
+  <p>¡Gracias por tu compra!</p>
+  <p><strong>Detalles del Pedido:</strong></p>
+  <ul>
+    <li><strong>Pedido ID:</strong> {{ pedido.id }}</li>
+    <li><strong>Cliente:</strong> {{ pedido.cliente_nombre }}</li>
+    <li><strong>Teléfono:</strong> {{ pedido.cliente_telefono }}</li>
+    <li><strong>Estado del Pedido:</strong> {{ pedido.get_estado_display }}</li>
+    <li><strong>Fecha de creación:</strong> {{ pedido.fecha_creacion }}</li>
+  </ul>
+
+  <p>Recibirás una notificación por WhatsApp una vez que tu pedido esté listo para ser entregado.</p>
+{% endblock %}

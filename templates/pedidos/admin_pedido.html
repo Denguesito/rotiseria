@@ -1,0 +1,27 @@
+<!-- admin_pedido.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Estadísticas de Pedidos</h2>
+  <p>Aquí puedes ver las estadísticas de pedidos confirmados y pendientes.</p>
+
+  <h3>Pedidos por Estado</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Estado</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Pagado</td>
+        <td>{{ pedidos_pagados_count }}</td>
+      </tr>
+      <tr>
+        <td>Pendiente</td>
+        <td>{{ pedidos_pendientes_count }}</td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}
