@@ -98,7 +98,7 @@ class IniciarPagoView(View):
     
     def get(self, request):
         """Método GET para crear la preferencia y redirigir al usuario a Mercado Pago."""
-        carrito = request.user.carrito  # Asegúrate de que el carrito esté asociado al usuario o sesión
+        carrito = obtener_carrito_activo(request)  # Usa la función que ya tienes
         init_point = crear_preferencia(carrito)
 
         if init_point:

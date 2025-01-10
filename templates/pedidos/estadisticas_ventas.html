@@ -1,0 +1,50 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+    <h1>Estadísticas de Ventas</h1>
+    
+    <h2>Ventas Semanales (del {{ fecha_actual|date:"Y-m-d" }} hacia atrás)</h2>
+    {% if ventas_semanales %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Rango de Fecha</th>
+                    <th>Total Ventas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estadistica in ventas_semanales %}
+                    <tr>
+                        <td>{{ estadistica.fecha_inicio }} - {{ estadistica.fecha_fin }}</td>
+                        <td>${{ estadistica.total_ventas }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay ventas registradas esta semana.</p>
+    {% endif %}
+    
+    <h2>Ventas Mensuales (de este mes)</h2>
+    {% if ventas_mensuales %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Rango de Fecha</th>
+                    <th>Total Ventas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estadistica in ventas_mensuales %}
+                    <tr>
+                        <td>{{ estadistica.fecha_inicio }} - {{ estadistica.fecha_fin }}</td>
+                        <td>${{ estadistica.total_ventas }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay ventas registradas este mes.</p>
+    {% endif %}
+    
+{% endblock %}
