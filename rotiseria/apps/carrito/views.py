@@ -5,70 +5,60 @@ from django.contrib import messages
 from .models import Carrito, CarritoItem
 from .forms import CarritoForm, AgregarCantidadProductoForm
 from apps.productos.models import Productos
-from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from django.views import View
 from .utils import crear_preferencia, procesar_notificacion_pago
+from datetime import datetime, time
 
 
 def obtener_carrito_activo(request):
     carrito_id = request.session.get('carrito_id', None)
     if carrito_id:
-        # Si ya hay un carrito en la sesión, lo buscamos
         return get_object_or_404(Carrito, id=carrito_id)
     else:
-        # Si no hay un carrito, creamos uno nuevo, sin valores por defecto
         carrito = Carrito.objects.create(cliente_nombre="", cliente_telefono="")
-        # Guardamos el ID del carrito en la sesión
         request.session['carrito_id'] = carrito.id
         return carrito
 
+
 class CarritoListView(ListView):
-    """Muestra el carrito y los productos añadidos."""
     model = CarritoItem
     template_name = 'carrito/carrito_list.html'
     context_object_name = 'items'
 
     def get_queryset(self):
-        # Obtén el carrito activo desde request.carrito
         carrito = self.request.carrito
         return carrito.items.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        # Obtén el carrito activo desde request.carrito
         carrito = self.request.carrito
-        
-        # Crear el formulario vacío (sin valores predeterminados)
-        context['form'] = CarritoForm()  # No pasa 'instance=carrito'
-        
-        # Añadir el carrito al contexto
+        context['form'] = CarritoForm()
         context['carrito'] = carrito
-        
-        # Contar la cantidad total de productos en el carrito
-        total_productos = sum(item.cantidad for item in carrito.items.all())
-        context['total_productos'] = total_productos
-
+        context['total_productos'] = sum(item.cantidad for item in carrito.items.all())
         return context
 
 
 class AgregarCantidadProductoView(View):
-    """Vista para seleccionar la cantidad de un producto antes de agregarlo al carrito."""
-    
     def get(self, request, pk):
         producto = get_object_or_404(Productos, pk=pk)
-        form = AgregarCantidadProductoForm()  # No es necesario pasar 'producto' al formulario aquí
+        form = AgregarCantidadProductoForm()
         return render(request, 'carrito/agregar_cantidad.html', {'form': form, 'producto': producto})
 
     def post(self, request, pk):
+        ahora = datetime.now().time()
+        hora_apertura = time(10, 0)
+        hora_cierre = time(0, 30)
+
+        if not (hora_apertura <= ahora or ahora < hora_cierre):
+            messages.error(request, "La rotisería está cerrada. No puedes agregar productos al carrito.")
+            return redirect('index')
+
         producto = get_object_or_404(Productos, pk=pk)
         form = AgregarCantidadProductoForm(request.POST)
 
         if form.is_valid():
             cantidad = form.cleaned_data['cantidad']
-            carrito = obtener_carrito_activo(request)  # Función para obtener el carrito activo
-            
+            carrito = obtener_carrito_activo(request)
             carrito_item, creado = CarritoItem.objects.get_or_create(carrito=carrito, producto=producto)
 
             if not creado:
@@ -78,13 +68,15 @@ class AgregarCantidadProductoView(View):
 
             carrito_item.save()
             messages.success(request, f"Se agregó {producto.nombre} al carrito.")
-            return redirect('index')  # Redirige a la página principal o la vista que desees
+            
+            # Redirigir al índice después de agregar el producto al carrito
+            return redirect('index')
 
         messages.error(request, "No se pudo agregar el producto al carrito.")
-        return render(request, 'carrito/agregar_cantidad.html', {'form': form, 'producto': producto})
+        return redirect('index')
+
 
 class EliminarProductoView(DeleteView):
-    """Elimina un producto del carrito."""
     model = CarritoItem
     template_name = 'carrito/eliminar_producto.html'
 
@@ -94,11 +86,16 @@ class EliminarProductoView(DeleteView):
 
 
 class IniciarPagoView(View):
-    """Vista para crear la preferencia de pago y redirigir a Mercado Pago."""
-    
     def get(self, request):
-        """Método GET para crear la preferencia y redirigir al usuario a Mercado Pago."""
-        carrito = obtener_carrito_activo(request)  # Usa la función que ya tienes
+        ahora = datetime.now().time()
+        hora_apertura = time(20, 30)
+        hora_cierre = time(0, 30)
+
+        if not (hora_apertura <= ahora or ahora < hora_cierre):
+            messages.error(request, "La rotisería está cerrada. No puedes realizar pagos en este momento.")
+            return redirect('carrito:carrito_list')
+
+        carrito = obtener_carrito_activo(request)
         init_point = crear_preferencia(carrito)
 
         if init_point:
@@ -106,11 +103,9 @@ class IniciarPagoView(View):
         else:
             return JsonResponse({"error": "No se pudo generar el pago."}, status=400)
 
+
 class NotificacionPagoView(View):
-    """Vista para recibir y procesar las notificaciones de pago de Mercado Pago."""
-    
     def post(self, request):
-        """Método POST para procesar la notificación de pago."""
         try:
             datos = request.POST
             procesar_notificacion_pago(datos)

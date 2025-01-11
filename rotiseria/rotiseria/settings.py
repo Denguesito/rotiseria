@@ -57,6 +57,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.carrito.context_processors.horario_atencion',
+                'apps.carrito.context_processors.total_productos_carrito',
             ],
         },
     },
