@@ -23,9 +23,8 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link text-white" href="{% url 'index' %}">Menu</a>
+                                <a class="nav-link text-white" href="{% url 'index' %}">Menú</a>
                             </li>
-                            <!-- Carrito visible en todo momento -->
                             <li class="nav-item">
                                 <a class="nav-link text-white position-relative" href="{% url 'carrito:carrito_list' %}">
                                     <i class="fas fa-shopping-cart"></i> <!-- Ícono del carrito -->
@@ -35,12 +34,9 @@
                                     </span>
                                 </a>
                             </li>
+                            <!-- Estado de la rotisería -->
                             <li class="nav-item">
-                                {% if estado_rotiseria == "abierto" %}
-                                    <span class="text-success">Abierto</span>
-                                {% else %}
-                                    <span class="text-danger">Cerrado</span>
-                                {% endif %}
+                                <span class="text-{{ color_estado }}">{{ estado_rotiseria|capfirst }}</span>
                             </li>
                         </ul>
                     </div>

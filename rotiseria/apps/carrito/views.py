@@ -7,10 +7,16 @@ from .forms import CarritoForm, AgregarCantidadProductoForm
 from apps.productos.models import Productos
 from django.http import JsonResponse
 from .utils import crear_preferencia, procesar_notificacion_pago
-from datetime import datetime, time
+from datetime import datetime
 
+# Importar la lógica de verificación de horario
+from .context_processors import horario_atencion
 
 def obtener_carrito_activo(request):
+    """
+    Obtiene el carrito activo asociado a la sesión actual.
+    Si no existe, crea uno nuevo.
+    """
     carrito_id = request.session.get('carrito_id', None)
     if carrito_id:
         return get_object_or_404(Carrito, id=carrito_id)
@@ -18,7 +24,6 @@ def obtener_carrito_activo(request):
         carrito = Carrito.objects.create(cliente_nombre="", cliente_telefono="")
         request.session['carrito_id'] = carrito.id
         return carrito
-
 
 class CarritoListView(ListView):
     model = CarritoItem
@@ -37,7 +42,6 @@ class CarritoListView(ListView):
         context['total_productos'] = sum(item.cantidad for item in carrito.items.all())
         return context
 
-
 class AgregarCantidadProductoView(View):
     def get(self, request, pk):
         producto = get_object_or_404(Productos, pk=pk)
@@ -45,11 +49,10 @@ class AgregarCantidadProductoView(View):
         return render(request, 'carrito/agregar_cantidad.html', {'form': form, 'producto': producto})
 
     def post(self, request, pk):
-        ahora = datetime.now().time()
-        hora_apertura = time(10, 0)
-        hora_cierre = time(0, 30)
+        # Obtener el estado de la rotisería desde el context processor
+        estado_rotiseria = horario_atencion(request)['estado_rotiseria']
 
-        if not (hora_apertura <= ahora or ahora < hora_cierre):
+        if estado_rotiseria == "cerrado":
             messages.error(request, "La rotisería está cerrada. No puedes agregar productos al carrito.")
             return redirect('index')
 
@@ -68,13 +71,10 @@ class AgregarCantidadProductoView(View):
 
             carrito_item.save()
             messages.success(request, f"Se agregó {producto.nombre} al carrito.")
-            
-            # Redirigir al índice después de agregar el producto al carrito
             return redirect('index')
 
         messages.error(request, "No se pudo agregar el producto al carrito.")
         return redirect('index')
-
 
 class EliminarProductoView(DeleteView):
     model = CarritoItem
@@ -84,14 +84,12 @@ class EliminarProductoView(DeleteView):
         messages.success(self.request, "Producto eliminado del carrito.")
         return reverse_lazy('index')
 
-
 class IniciarPagoView(View):
     def get(self, request):
-        ahora = datetime.now().time()
-        hora_apertura = time(20, 30)
-        hora_cierre = time(0, 30)
+        # Obtener el estado de la rotisería desde el context processor
+        estado_rotiseria = horario_atencion(request)['estado_rotiseria']
 
-        if not (hora_apertura <= ahora or ahora < hora_cierre):
+        if estado_rotiseria == "cerrado":
             messages.error(request, "La rotisería está cerrada. No puedes realizar pagos en este momento.")
             return redirect('carrito:carrito_list')
 
@@ -102,7 +100,6 @@ class IniciarPagoView(View):
             return redirect(init_point)
         else:
             return JsonResponse({"error": "No se pudo generar el pago."}, status=400)
-
 
 class NotificacionPagoView(View):
     def post(self, request):

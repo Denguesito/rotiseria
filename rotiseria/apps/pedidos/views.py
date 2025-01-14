@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 from .models import EstadisticaVenta
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 class CrearPedidoView(View):
     """Crea un pedido y marca su estado como 'pagado'."""
@@ -94,19 +96,29 @@ class NotificacionPagoView(View):
 # Aplicar el decorador a la clase entera para restringir el acceso solo a los administradores
 @method_decorator(staff_member_required, name='dispatch')
 class EstadisticasVentasView(View):
-    """Vista para mostrar las estadísticas de ventas semanales y mensuales."""
-
     def get(self, request):
         fecha_actual = datetime.today().date()
 
         # Obtener las estadísticas de ventas semanales y mensuales
-        ventas_semanales = EstadisticaVenta.ventas_semanales()
-        ventas_mensuales = EstadisticaVenta.ventas_mensuales()
+        ventas_semanales = EstadisticaVenta.ventas_semanales()  # Asegúrate de que esta función esté definida en tu modelo
+        ventas_mensuales = EstadisticaVenta.ventas_mensuales()  # Asegúrate de que esta función esté definida en tu modelo
+
+        # Preprocesar datos para los gráficos
+        datos_semanales = {
+            'fechas': [f"{v.fecha_inicio} - {v.fecha_fin}" for v in ventas_semanales],
+            'ventas': [float(v.total_ventas) for v in ventas_semanales]
+        }
+        datos_mensuales = {
+            'fechas': [f"{v.fecha_inicio} - {v.fecha_fin}" for v in ventas_mensuales],
+            'ventas': [float(v.total_ventas) for v in ventas_mensuales]
+        }
 
         context = {
             'ventas_semanales': ventas_semanales,
             'ventas_mensuales': ventas_mensuales,
             'fecha_actual': fecha_actual,
+            'datos_semanales': json.dumps(datos_semanales, cls=DjangoJSONEncoder),
+            'datos_mensuales': json.dumps(datos_mensuales, cls=DjangoJSONEncoder),
         }
 
         return render(request, 'pedidos/estadisticas_ventas.html', context)

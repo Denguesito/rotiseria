@@ -2,8 +2,9 @@
 
 {% block content %}
     <h1>Estadísticas de Ventas</h1>
-    
+
     <h2>Ventas Semanales (del {{ fecha_actual|date:"Y-m-d" }} hacia atrás)</h2>
+    <div id="grafico-semanal"></div> <!-- Contenedor del gráfico semanal -->
     {% if ventas_semanales %}
         <table class="table">
             <thead>
@@ -24,8 +25,9 @@
     {% else %}
         <p>No hay ventas registradas esta semana.</p>
     {% endif %}
-    
+
     <h2>Ventas Mensuales (de este mes)</h2>
+    <div id="grafico-mensual"></div> <!-- Contenedor del gráfico mensual -->
     {% if ventas_mensuales %}
         <table class="table">
             <thead>
@@ -46,5 +48,28 @@
     {% else %}
         <p>No hay ventas registradas este mes.</p>
     {% endif %}
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        // Datos para el gráfico semanal
+        var datosSemanales = JSON.parse('{{ datos_semanales|escapejs }}');
+        var graficoSemanal = {
+            x: datosSemanales.fechas,
+            y: datosSemanales.ventas,
+            type: 'bar',
+            marker: { color: 'blue' }
+        };
+        Plotly.newPlot('grafico-semanal', [graficoSemanal]);
+    
+        // Datos para el gráfico mensual
+        var datosMensuales = JSON.parse('{{ datos_mensuales|escapejs }}');
+        var graficoMensual = {
+            x: datosMensuales.fechas,
+            y: datosMensuales.ventas,
+            type: 'bar',
+            marker: { color: 'green' }
+        };
+        Plotly.newPlot('grafico-mensual', [graficoMensual]);
+    </script>
     
 {% endblock %}
