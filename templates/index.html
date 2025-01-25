@@ -10,7 +10,7 @@
     <button onclick="toggleSubmenu('{{ categoria }}')" class="btn btn-link" style="background: none; border: none; cursor: pointer; width: 100%; display: contents;">
         {% for categoria_img, imagen in imagenes_categorias %}
             {% if categoria == categoria_img %}
-            <div class="d-flex justify-content-center align-items-center" style="background-image: url('{{ imagen }}'); background-size: cover; background-position: center; height: 150px; width: 100%;">
+            <div class="d-flex justify-content-center align-items-center" style="background-image: url('{{ imagen }}'); background-size: cover; background-position: center; height: 150px; width: 100%; border-radius: 34px;">
                 <h2 class="catalogo text-white">{{ categoria }}</h2>
             </div>
             

@@ -94,18 +94,33 @@ class IniciarPagoView(View):
             return redirect('carrito:carrito_list')
 
         carrito = obtener_carrito_activo(request)
+
+        if not carrito:  # Verifica si el carrito está vacío
+            messages.error(request, "Tu carrito está vacío. No puedes realizar el pago.")
+            return redirect('carrito:carrito_list')
+
         init_point = crear_preferencia(carrito)
 
         if init_point:
             return redirect(init_point)
         else:
-            return JsonResponse({"error": "No se pudo generar el pago."}, status=400)
+            messages.error(request, "Hubo un problema al generar el pago.")
+            return redirect('carrito:carrito_list')  # Redirige al carrito si falla la creación de la preferencia
 
 class NotificacionPagoView(View):
     def post(self, request):
         try:
-            datos = request.POST
+            # Obtener los datos de la notificación desde el body del POST
+            datos = request.POST.dict()  # Convierte QueryDict a dict
+
+            if not datos:
+                raise ValueError("No se recibieron datos en la notificación")
+
+            # Llamar a la función de procesamiento
             procesar_notificacion_pago(datos)
+
             return JsonResponse({"status": "Notificación recibida y procesada correctamente"})
         except Exception as e:
-            return JsonResponse({"error": f"Error procesando la notificación: {e}"}, status=500)
+            # Registra el error para un análisis posterior
+            print(f"Error al procesar la notificación de pago: {e}")
+            return JsonResponse({"error": f"Error procesando la notificación: {str(e)}"}, status=500)

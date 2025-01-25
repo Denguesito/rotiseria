@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -130,7 +131,7 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 MP_CLIENT_ID = 'your_client_id'
 MP_CLIENT_SECRET = 'your_client_secret'
 MP_ACCESS_TOKEN = 'your_access_token'
-
+MERCADOPAGO_ACCESS_TOKEN = config("MERCADOPAGO_ACCESS_TOKEN")
 # WhatsApp API (Twilio)
 TWILIO_ACCOUNT_SID = 'your_account_sid_here'
 TWILIO_AUTH_TOKEN = 'your_auth_token_here'

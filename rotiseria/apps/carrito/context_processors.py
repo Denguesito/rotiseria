@@ -7,10 +7,14 @@ def horario_atencion(request):
     """
     ahora = datetime.now().time()
     hora_apertura = time(20, 30)  # 8:30 PM
-    hora_cierre = time(0, 30)     # 12:30 AM del siguiente día
+    hora_cierre = time(00, 30)     # 12:30 AM del siguiente día
 
-    # Verificar si el horario actual está dentro del rango de atención
-    if hora_apertura <= ahora or ahora < hora_cierre:
+    if hora_apertura <= hora_cierre:  # Caso sin cruce de medianoche
+        abierto = hora_apertura <= ahora < hora_cierre
+    else:  # Caso con cruce de medianoche
+        abierto = ahora >= hora_apertura or ahora < hora_cierre
+
+    if abierto:
         estado = {
             'estado_rotiseria': 'abierto',
             'color_estado': 'success'  # Bootstrap usa "success" para color verde

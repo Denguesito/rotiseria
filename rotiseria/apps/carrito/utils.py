@@ -1,6 +1,7 @@
 import mercadopago
 import json
-
+import os
+from django.conf import settings
 # SDK de Mercado Pago (configurado con tu Access Token)
 def crear_preferencia(carrito):
     """
@@ -8,8 +9,8 @@ def crear_preferencia(carrito):
     """
     # Token de acceso para Mercado Pago (Cambiar a un entorno seguro al implementar)
     # Usa una variable de entorno en producción para mayor seguridad
-    sdk = mercadopago.SDK("TU_ACCESS_TOKEN_AQUÍ")  # Cambiar por el token real
-
+    sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
+    
     # Generar la lista de ítems desde el carrito
     items = [
         {
@@ -22,43 +23,52 @@ def crear_preferencia(carrito):
 
     # Configurar la preferencia
     preferencia = {
-        "items": items,
-        "back_urls": {
-            # Cambiar estas URLs al dominio real al subir al servidor
-            "success": "http://127.0.0.1:8000/carrito/pago-exitoso/",   # Pruebas locales
-            "failure": "http://127.0.0.1:8000/carrito/pago-fallido/",  # Pruebas locales
-            "pending": "http://127.0.0.1:8000/carrito/pago-pendiente/" # Pruebas locales
-        },
-        "auto_return": "approved",  # Redirige automáticamente si el pago se aprueba
-        "notification_url": "http://127.0.0.1:8000/carrito/notificacion/",  # Cambiar en producción
-    }
+    "items": items,
+    "back_urls": {
+        "success": "https://a1de-181-110-191-84.ngrok-free.app/carrito/pago-exitoso/",  # URL pública
+        "failure": "https://a1de-181-110-191-84.ngrok-free.app/carrito/pago-fallido/",  # URL pública
+        "pending": "https://a1de-181-110-191-84.ngrok-free.app/carrito/pago-pendiente/"  # URL pública
+    },
+    "auto_return": "approved",  # Redirige automáticamente si el pago se aprueba
+    "notification_url": "https://a1de-181-110-191-84.ngrok-free.app/carrito/notificacion/",  # URL pública
+}
+
 
     try:
         # Llamar a la API de Mercado Pago para crear la preferencia
         response = sdk.preference().create(preferencia)
-        return response["response"]["init_point"]  # URL para redirigir al cliente
-    except Exception as e:
+        
+        # Verificamos si la respuesta es exitosa
+        if response["status"] == 201:
+            # La preferencia se creó correctamente
+            return response["response"]["init_point"]  # URL para redirigir al cliente
+        else:
+            print(f"Error en la respuesta de Mercado Pago: {response}")
+            return None
+    except mercadopago.exceptions.MPException as e:
+        # Aquí podemos capturar más detalles sobre el error
         print(f"Error al crear la preferencia: {e}")
+        print(f"Detalles del error: {e.message}")
         return None
 
+
+# apps/carrito/utils.py
 
 def procesar_notificacion_pago(datos):
     """
     Procesa la notificación enviada por Mercado Pago y registra el pedido.
     """
     try:
-        # Para depurar, imprime los datos recibidos
-        print("Datos de la notificación recibida:", json.dumps(datos, indent=4))
+        # Lógica para procesar la notificación (asegúrate de que los datos sean correctos)
+        print("Datos de la notificación recibida:", datos)
 
-        # Ejemplo de validación inicial:
-        # Puedes verificar el status del pago, el ID del pedido, entre otros.
-        if "id" in datos:
-            # Aquí podrías buscar el pago en Mercado Pago y verificar su estado
-            # Por ejemplo: verificar si es 'approved'
-            print(f"ID de pago recibido: {datos['id']}")
-        
-        # Agrega lógica para registrar el pedido en la base de datos aquí
-        # ...
-        print("Notificación procesada exitosamente.")
+        # Verifica el estado del pago aquí (por ejemplo: "approved")
+        if "status" in datos and datos["status"] == "approved":
+            # Agregar lógica de registro de pedido
+            print("Pago aprobado")
+        else:
+            print("El pago no fue aprobado")
+
     except Exception as e:
         print(f"Error procesando notificación: {e}")
+        raise  # Vuelve a lanzar la excepción si es necesario

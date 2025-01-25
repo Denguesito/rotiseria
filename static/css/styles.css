@@ -1,48 +1,108 @@
-*{
-    box-sizing: border-box;
+body {
+    background-color: #808080; /* Fondo claro que contrasta con imágenes */
+    color: #333; /* Texto oscuro para buena legibilidad */
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
 }
 
-
-.encabezado   {
-    max-width: 100%;
-    height: 70px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: stretch;
+header, footer {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
 }
 
+.navbar-toggler:hover {
+    text-decoration: none;
+    width: 100%;
+}
+
+ 
+.text-success {
+    --bs-text-opacity: 1;
+    color: #00f985 !important;  
+}
+
+main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Encabezado */
+.encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+}
 
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-content: center;
-    margin-left: 0px;
-    margin-right: 0;
-    padding-left: 200px; /*toquetiar el padin para 390 */
-    padding-right: 200px;
-    max-width: 100%;
+    padding: 0 45px;
 }
 
+/* Responsividad */
+@media (max-width: 768px) {
+    .producto-d-flex-container {
+        flex-direction: column;
+        align-items: center;
+    }
 
-.catalogo {
-    display: flex;
-    align-content: center;
-    justify-content: center;
-    text-align: center;
-    
+    .producto-detalle-container {
+        padding: 10px;
+    }
+
+    .encabezado {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .producto-imagen-container img {
+        max-width: 90%;
+    }
+
+    footer {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .producto-detalle-container {
+        max-width: 100%;
+    }
+
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+/* Específicos de la aplicación */
+.productos {
+    margin-bottom: 20px;
+}
+
+.card {
+    margin: 10px auto;
+}
+
+.producto-detalle {
+    max-width: 100%;
+    padding: 10px;
+}
+
+.producto-imagen-container img {
+    max-width: 100%;
 }
 
 .lista {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    
 }
 
 .comida {
@@ -53,67 +113,70 @@
     gap: 10px;
 }
 
+
 .platos {
-    width: 190px;
+    width: 225px;
     height: 180px;
 }
 
-.productos {
-    margin-bottom: 10px !important;
-}
-
-/*formulario  */
-.counter-container {
-    text-align: center;
-    font-family: Arial, sans-serif;
-}
-
-.counter-label {
-    display: block;
-    font-weight: bold;
-    background-color: #f5f5f5;
-    padding: 10px 0;
+.carrito-item {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
     margin-bottom: 10px;
-    border: 1px solid #ddd;
 }
 
-.counter {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.counter-btn {
-    background-color: #ffcc00;
-    border: none;
-    color: #000;
-    font-size: 18px;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    cursor: pointer;
+.carrito-total {
     text-align: center;
-    line-height: 35px;
-}
-
-.counter-btn:hover {
-    background-color: #e6b800;
-}
-
-input#quantity {
-    border: none;
-    text-align: center;
-    width: 50px;
-    font-size: 18px;
-    background-color: transparent;
-    outline: none;
-}
-
-.total-container {
-    margin-top: 10px;
-    font-size: 16px;
     font-weight: bold;
-    color: #333;
+    margin-top: 20px;
 }
 
+button, a.btn {
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+button.btn-primary, a.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+button.btn-secondary, a.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+button.btn-danger, a.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+h2 {
+    color: #007bff;
+}
+
+/* Ajustes de márgenes */
+.mt-4 {
+    margin-top: 1.5rem !important;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.mt-5 {
+    margin-top: 3rem !important;
+}
+
+/* Flex container ajustes */
+.flex-md-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
