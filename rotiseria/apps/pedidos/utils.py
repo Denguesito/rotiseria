@@ -1,34 +1,38 @@
-from twilio.rest import Client
+from django.core.mail import send_mail
 import json
 
-def enviar_notificacion_whatsapp(pedido):
-    """Envía la notificación de pago confirmado al administrador (usando el mismo número para enviar y recibir)."""
-    # SID de la cuenta de Twilio y token de autenticación
-    account_sid = 'your_account_sid'  # Tu SID de cuenta Twilio
-    auth_token = 'your_auth_token'    # Tu token de autenticación Twilio
+def enviar_notificacion_email(pedido):
+    """Envía una notificación de pedido confirmado por correo electrónico al administrador."""
+    asunto = "Nuevo pedido confirmado"
+    mensaje = (
+        f"Se ha recibido un nuevo pedido pagado:\n"
+        f"Cliente: {pedido.cliente_nombre}\n"
+        f"Teléfono: {pedido.cliente_telefono}\n"
+        f"Detalles del pedido:\n"
+        + "\n".join([
+            f"- {item.producto.nombre} x{item.cantidad} (${item.producto.precio * item.cantidad})"
+            for item in pedido.carrito.items.all()
+        ])
+    )
+    
+    destinatarios = ["denguesito2013@gmail.com"]
 
-    # Crear un cliente Twilio con las credenciales
-    client = Client(account_sid, auth_token)
-
-    # Mensaje que se enviará al administrador
-    mensaje_admin = f"Nuevo pedido confirmado y pagado:\nDetalles: {pedido}"
-
-    # Usar el mismo número de Twilio tanto para 'from' como para 'to'
     try:
-        # Enviar la notificación al administrador
-        client.messages.create(
-            body=mensaje_admin,  # Cuerpo del mensaje
-            from_='whatsapp:+14155238886',  # Número de WhatsApp Twilio (sandbox o propio)
-            to='whatsapp:+14155238886'  # Usar el mismo número para el administrador
+        send_mail(
+            subject=asunto,
+            message=mensaje,
+            from_email="denguesito2013@gmail.com",  # Tu correo como remitente
+            recipient_list=destinatarios,
+            fail_silently=False,
         )
-        print("Notificación enviada correctamente al administrador.")
+        print("Correo enviado con éxito al administrador.")
     except Exception as e:
-        print(f"Error al enviar la notificación: {e}")
+        print(f"Error al enviar el correo: {e}")
 
 def procesar_notificacion_pago(datos):
     """
     Procesa la notificación de pago recibida desde Mercado Pago y realiza las acciones necesarias,
-    como enviar la notificación por WhatsApp al administrador.
+    como enviar la notificación por correo electrónico al administrador.
     """
     try:
         # Para depurar, imprime los datos recibidos
@@ -42,8 +46,15 @@ def procesar_notificacion_pago(datos):
             # o notificar al administrador que el pago ha sido confirmado.
             
             # Supongamos que 'pedido' es el objeto que contiene la información del pedido.
-            # Llama a la función de notificación
-            enviar_notificacion_whatsapp(datos)
+            # Aquí, 'datos' puede contener los detalles del pago y del pedido, por lo que puedes extraerlos de la notificación.
+            pedido = datos.get("pedido")  # O la forma en que se almacenan los datos del pedido en 'datos'
+
+            # Llamar a la función de notificación por correo
+            if pedido:
+                enviar_notificacion_email(pedido)  # Envía el correo al administrador con la información del pedido
+            else:
+                print("No se encontraron detalles del pedido en la notificación.")
+            
             print("Notificación procesada y enviada.")
         else:
             print(f"Estado del pago: {datos.get('status')}")

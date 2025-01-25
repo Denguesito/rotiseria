@@ -128,11 +128,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 
 # Mercado Pago settings
-MP_CLIENT_ID = 'your_client_id'
-MP_CLIENT_SECRET = 'your_client_secret'
-MP_ACCESS_TOKEN = 'your_access_token'
 MERCADOPAGO_ACCESS_TOKEN = config("MERCADOPAGO_ACCESS_TOKEN")
-# WhatsApp API (Twilio)
-TWILIO_ACCOUNT_SID = 'your_account_sid_here'
-TWILIO_AUTH_TOKEN = 'your_auth_token_here'
-TWILIO_WHATSAPP_NUMBER = 'whatsapp:+your_whatsapp_number_here'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'denguesito2013@gmail.com'  # Tu correo
+EMAIL_HOST_PASSWORD = 'tu_contraseña'  # Contraseña de tu correo o contraseña de aplicación
+DEFAULT_FROM_EMAIL = 'denguesito2013@gmail.com'

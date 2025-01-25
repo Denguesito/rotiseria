@@ -3,7 +3,6 @@ from django.views import View
 from django.contrib import messages
 from .models import Pedido
 from apps.carrito.models import CarritoItem
-from .utils import enviar_notificacion_whatsapp, procesar_notificacion_pago
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 from .models import EstadisticaVenta
@@ -11,6 +10,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.core.serializers.json import DjangoJSONEncoder
 import json
+from .utils import enviar_notificacion_email
 
 class CrearPedidoView(View):
     """Crea un pedido y marca su estado como 'pagado'."""
@@ -18,48 +18,36 @@ class CrearPedidoView(View):
     def post(self, request, carrito_id):
         # Obtén el carrito relacionado con el usuario
         carrito = CarritoItem.objects.filter(carrito__id=carrito_id).first()
-        
+
         if not carrito:
             messages.error(request, "Carrito no encontrado.")
             return redirect('index')  # Redirige a la página principal
-        
+
         # Crear el pedido sin necesidad de 'estado', Mercado Pago maneja el estado
         pedido = Pedido.objects.create(
             carrito=carrito,
             cliente_nombre=carrito.carrito.cliente_nombre,
             cliente_telefono=carrito.carrito.cliente_telefono
         )
-        
-        # Enviar la notificación de WhatsApp al administrador
-        enviar_notificacion_whatsapp(pedido)
-        
+
+        # Enviar la notificación de correo al administrador
+        enviar_notificacion_email(pedido)
+
         # Actualizar estadísticas de ventas
         total_ventas = sum(item.producto.precio * item.cantidad for item in carrito.items.all())
-        
+
         # Calcular fecha de la semana y mes actual
         fecha_actual = datetime.today().date()
         fecha_inicio_semana = fecha_actual - timedelta(days=fecha_actual.weekday())
         fecha_inicio_mes = fecha_actual.replace(day=1)
-        
+
         # Actualizar las estadísticas de ventas semanales y mensuales
         EstadisticaVenta.actualizar_estadisticas(fecha_inicio_semana, fecha_actual, total_ventas)
         EstadisticaVenta.actualizar_estadisticas(fecha_inicio_mes, fecha_actual, total_ventas)
-        
+
         # Mensaje de éxito y redirección
         messages.success(request, "Pago confirmado. Pedido realizado con éxito.")
         return redirect('confirmacion_pedido', pedido_id=pedido.id)
-
-class ConfirmacionPedidoView(View):
-    """Muestra la confirmación del pedido después del pago."""
-
-    def get(self, request, pedido_id):
-        pedido = Pedido.objects.filter(id=pedido_id).first()
-        
-        if not pedido:
-            messages.error(request, "Pedido no encontrado.")
-            return redirect('index')
-        
-        return render(request, 'pedidos/confirmacion_pedido.html', {'pedido': pedido})
 
 class NotificacionPagoView(View):
     """Recibe y procesa las notificaciones de pago de Mercado Pago."""
@@ -70,18 +58,24 @@ class NotificacionPagoView(View):
             datos = request.POST
 
             # Procesar la notificación de pago
-            if procesar_notificacion_pago(datos):
-                # Actualizar las estadísticas de ventas
+            if datos.get("status") == "approved":
+                print("Pago aprobado, procesando el pedido.")
+
                 pedido_id = datos.get('order_id')
                 pedido = Pedido.objects.get(id=pedido_id)
+
+                # Enviar notificación por correo electrónico
+                enviar_notificacion_email(pedido)
+
+                # Actualizar estadísticas de ventas
                 carrito = pedido.carrito
                 total_ventas = sum(item.producto.precio * item.cantidad for item in carrito.items.all())
-                
+
                 # Calcular fecha de la semana y mes actual
                 fecha_actual = datetime.today().date()
                 fecha_inicio_semana = fecha_actual - timedelta(days=fecha_actual.weekday())
                 fecha_inicio_mes = fecha_actual.replace(day=1)
-                
+
                 # Actualizar las estadísticas de ventas semanales y mensuales
                 EstadisticaVenta.actualizar_estadisticas(fecha_inicio_semana, fecha_actual, total_ventas)
                 EstadisticaVenta.actualizar_estadisticas(fecha_inicio_mes, fecha_actual, total_ventas)
@@ -93,7 +87,7 @@ class NotificacionPagoView(View):
         except Exception as e:
             return JsonResponse({"error": f"Error procesando la notificación: {e}"}, status=500)
 
-# Aplicar el decorador a la clase entera para restringir el acceso solo a los administradores
+
 @method_decorator(staff_member_required, name='dispatch')
 class EstadisticasVentasView(View):
     def get(self, request):
