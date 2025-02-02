@@ -49,6 +49,21 @@ class CrearPedidoView(View):
         messages.success(request, "Pago confirmado. Pedido realizado con éxito.")
         return redirect('confirmacion_pedido', pedido_id=pedido.id)
 
+class ConfirmacionPedidoView(View):
+    def get(self, request, *args, **kwargs):
+        # Suponiendo que el ID del pedido se pasa en la URL
+        pedido_id = self.kwargs.get('pedido_id')
+        
+        try:
+            # Obtener el pedido usando el ID (ajusta el campo según tu modelo)
+            pedido = Pedido.objects.get(id=pedido_id)
+        except Pedido.DoesNotExist:
+            # Si no existe el pedido con ese ID, redirigir o mostrar un error
+            return render(request, '404.html', {'error': 'Pedido no encontrado'})
+        
+        # Pasar el pedido al contexto del template
+        return render(request, 'pedidos/confirmacion_pedido.html', {'pedido': pedido})
+
 class NotificacionPagoView(View):
     """Recibe y procesa las notificaciones de pago de Mercado Pago."""
 

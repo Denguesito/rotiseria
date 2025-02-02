@@ -24,10 +24,6 @@ def horario_atencion(request):
             'estado_rotiseria': 'cerrado',
             'color_estado': 'danger'  # Bootstrap usa "danger" para color rojo
         }
-
-    # Para depuración en consola
-    print("Estado actual de la rotisería:", estado)
-
     return estado
 
 def total_productos_carrito(request):
